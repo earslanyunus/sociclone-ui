@@ -3,7 +3,7 @@
 Bu proje, Sociclone API projesinin frontend kısmını içermektedir. Kullanılan teknolojiler aşağıdaki gibidir:
 
 * Next.js
-* Shadcn
+* Shadcn 
 * Tailwind CSS
 
 # About the Project
