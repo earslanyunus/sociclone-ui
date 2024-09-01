@@ -1,0 +1,14 @@
+{
+  "SignupPage": {
+    "welcome": "<span class='text-lime-400'>Sociclone</span>'a Hoşgeldin",
+    "joinUs": "Bize katıl ve yepyeni bir sosyal medya deneyimine adım at",
+    "email": "E-posta",
+    "password": "Şifre",
+    "forgotPassword": "Şifremi Unuttum",
+    "register": "Kayıt Ol",
+    "haveAccount": "Zaten bir hesabım var",
+    "easierWay": "Daha kolay bir yol mu arıyorsun?",
+    "registerWithGoogle": "Google ile Kayıt Ol",
+    "registerWithApple": "Apple ile Kayıt Ol"
+  }
+}

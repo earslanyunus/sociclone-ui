@@ -1,0 +1,13 @@
+{
+  "SignupPage": {
+    "welcome": "Welcome to <span class='text-lime-400'>Sociclone</span>",
+    "joinUs": "Join us and step into a brand new social media experience",
+    "email": "Email",
+    "password": "Password",
+    "register": "Register",
+    "haveAccount": "I have an account",
+    "easierWay": "Looking for an easier way?",
+    "registerWithGoogle": "Register with Google",
+    "registerWithApple": "Register with Apple"
+  }
+}

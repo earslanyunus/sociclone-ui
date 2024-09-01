@@ -2,11 +2,17 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
     darkMode: ["class"],
+	
     content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
+  safelist:[
+	{
+		pattern:/text-lime-(100|200|300|400|500|600|700|800|900)/
+	}
+],
   theme: {
   	extend: {
   		backgroundImage: {
