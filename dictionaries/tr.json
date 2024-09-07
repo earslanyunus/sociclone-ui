@@ -10,5 +10,30 @@
     "easierWay": "Daha kolay bir yol mu arıyorsun?",
     "registerWithGoogle": "Google ile Kayıt Ol",
     "registerWithApple": "Apple ile Kayıt Ol"
+  },
+  "SigninPage": {
+    "welcome":"<span class='text-lime-400'>Sociclone</span>'a Hoşgeldin",
+    "description":"Hemen giriş yap ve eğlenceye kaldığı yerden devam et",
+    "email":"E-posta",
+    "password":"Şifre",
+    "otp":"Doğrulama Kodu",
+    "otpDescription":"Lütfen mail adresinize gönderilen doğrulama kodunu giriniz.",
+    "forgotPassword":"Şifremi Unuttum",
+    "login":"Giriş Yap",
+    "createAccount":"Hemen hesap oluştur",
+    "easierWay":"Daha kolay bir yol mu arıyorsun?",
+    "loginWithGoogle":"Google ile Giriş Yap",
+    "loginWithApple":"Apple ile Giriş Yap"
+  },
+  "ForgotPasswordPage": {
+    "slogan": "Sosyal medya deneyimini baştan tasarlıyoruz",
+    "title": "Şifremi Unuttum",
+    "description": "Kayıtlı olduğunuz e-posta adresinizi girin, ardından size göndereceğimiz doğrulama kodu ile şifrenizi sıfırlayabilirsiniz.",
+    "email": "E-posta",
+    "emailPlaceholder": "ornek@email.com",
+    "sendResetLink": "Şifre Sıfırlama Bağlantısı Gönder",
+    "backToLogin": "Giriş sayfasına dön",
+    "testimonial": "Bu ekranı sürekli görüyorsan bir sorun var. Belki de parola yöneticisi kullanmalısın :)",
+    "testimonialName": "Bir dost"
   }
 }

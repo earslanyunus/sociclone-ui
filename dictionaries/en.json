@@ -9,5 +9,30 @@
     "easierWay": "Looking for an easier way?",
     "registerWithGoogle": "Register with Google",
     "registerWithApple": "Register with Apple"
+  },
+  "SigninPage": {
+    "welcome": "Welcome to <span class='text-lime-400'>Sociclone</span>",
+    "description": "Enter now and continue from where you left off",
+    "email": "Email",
+    "password": "Password",
+    "otp": "OTP",
+    "otpDescription": "Please enter the OTP sent to your email address.",
+    "forgotPassword": "Forgot Password",
+    "login": "Login",
+    "createAccount": "Create an account now",
+    "easierWay": "Looking for an easier way?",
+    "loginWithGoogle": "Login with Google",
+    "loginWithApple": "Login with Apple"
+  },
+  "ForgotPasswordPage": {
+    "slogan": "Redesigning social media experience from scratch",
+    "title": "Forgot Password",
+    "description": "Enter your email address and we'll send you a password reset link.",
+    "email": "Email",
+    "emailPlaceholder": "example@email.com",
+    "sendResetLink": "Send Password Reset Link",
+    "backToLogin": "Back to login page",
+    "testimonial": "If you keep seeing this screen, there's a problem. Maybe you should use a password manager :)",
+    "testimonialName": "A friend"
   }
 }
