@@ -5,7 +5,7 @@ import IconWhite from "/public/sociclone_icon_white.svg";
 import Link from "next/link";
 import { getDictionary } from "../dictionaries";
 import { useRef } from "react";
-import SigninForm from "@/components/signinForm";
+import SigninForm from "@/components/SigninForm";
 
 const SigninPage = async ({
   params: { lang },
@@ -84,13 +84,18 @@ const SigninPage = async ({
             </p>
 
             <Button
-              variant={"outline"}
-              className="w-full  py-6 mt-6 hover:bg-white hover:border-lime-400 shadow-sm"
-            >
-              <LogosGoogleIcon className="w-6 h-6 me-4 " />
-              <span>{SigninPage.loginWithGoogle}</span>
-            </Button>
+          asChild
+            variant={"outline"}
+            className="w-full  py-6 mt-6 hover:bg-white hover:border-lime-400 shadow-sm"
+          >
+            <Link href="http://localhost:3002/auth/google">
+            <LogosGoogleIcon className="w-6 h-6 me-4 " />
+            <span>{SigninPage.loginWithGoogle}</span>
+
+            </Link>
+          </Button>
             <Button
+              disabled
               variant={"outline"}
               className="w-full py-6 mt-4 hover:bg-white hover:border-lime-400 shadow-sm"
             >

@@ -1,6 +1,5 @@
+import { redirect } from 'next/navigation';
 
 export default function Home({ params: { lang } }:{params:{lang:string}}) {
-  return (
-    <main>Home</main>
-  );
+  redirect(`/${lang}/home`);
 }

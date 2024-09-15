@@ -1,13 +1,13 @@
-import CompanyLogo from "@/components/commons/CompanyLogo";
 import { IcRoundApple } from "@/components/icons/IcRoundApple";
 import { LogosGoogleIcon } from "@/components/icons/LogosGoogleIcon";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import Image from "next/image";
 import IconWhite from "/public/sociclone_icon_white.svg";
 import Link from "next/link";
 import { getDictionary } from "../dictionaries";
+import SignupForm from "@/components/signupForm";
+
+
+
 
 const signupPage = async ({
   params: { lang },
@@ -17,6 +17,10 @@ const signupPage = async ({
   const dict = await getDictionary(lang);
 
   const { SignupPage } = dict;
+
+ 
+  
+
 
   return (
     <main className="w-screen min-h-screen grid md:grid-cols-2">
@@ -44,8 +48,19 @@ const signupPage = async ({
           />
         </div>
       </div>
+      <div >
+      
+      
+        
+
+        
+      </div>
+
+      
+
       <div className="flex items-center justify-center ">
-        <div className=" p-4 max-w-sm w-full">
+        <div className="  max-w-sm w-full">
+          <div className="px-4">
           <Link href="/signin">
             <p className="text-left mb-2 flex items-center   text-gray-400 hover:underline">
               <svg
@@ -67,29 +82,11 @@ const signupPage = async ({
             dangerouslySetInnerHTML={{ __html: SignupPage.welcome }}
           ></p>
           <p className="text-gray-500  mb-8">{SignupPage.joinUs}</p>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="email">{SignupPage.email}</Label>
-            <Input
-              type="email"
-              id="email"
-              className="focus-visible:ring-lime-500 "
-            />
-          </div>
-          <div className="grid mt-3 w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="password">{SignupPage.password}</Label>
-            <Input
-              type="password"
-              id="password"
-              className="focus-visible:ring-lime-500"
-            />
-          </div>
-          <Button
-            variant={"default"}
-            className="w-full py-6 mt-6 bg-lime-300 text-lime-800 font-bold tracking-wide hover:bg-lime-400 "
-          >
-            {SignupPage.register}
-          </Button>
 
+          </div>
+
+          <SignupForm lang={SignupPage} />
+          <div className="px-4">
           <p className=" mt-4 group  flex justify-between items-center underline bg-lime-100 rounded-md p-2 text-lime-600">
             {SignupPage.easierWay}{" "}
             <svg
@@ -105,19 +102,25 @@ const signupPage = async ({
           </p>
 
           <Button
+          asChild
             variant={"outline"}
             className="w-full  py-6 mt-6 hover:bg-white hover:border-lime-400 shadow-sm"
           >
+            <Link href="http://localhost:3000/auth/google">
             <LogosGoogleIcon className="w-6 h-6 me-4 " />
             <span>{SignupPage.registerWithGoogle}</span>
+
+            </Link>
           </Button>
           <Button
+          disabled
             variant={"outline"}
             className="w-full py-6 mt-4 hover:bg-white hover:border-lime-400 shadow-sm"
           >
             <IcRoundApple className="w-8 h-8 me-4 " />
             {SignupPage.registerWithApple}
           </Button>
+        </div>
         </div>
       </div>
     </main>

@@ -1,10 +1,14 @@
 import { match } from '@formatjs/intl-localematcher';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 const locales = ['en', 'tr'];
 const defaultLocale = 'tr';
 
-function getLocale(request: any) {
+// Korumalı rotaları tanımla
+const protectedRoutes = ['/home'];
+
+function getLocale(request: NextRequest) {
   try {
     const headers = request.headers;
     const acceptLanguage = headers.get('accept-language');
@@ -14,13 +18,11 @@ function getLocale(request: any) {
       return defaultLocale;
     }
 
-    // Accept-Language başlığını parse et
     const languages: string[] = acceptLanguage.split(',').map((lang: string) => {
       const [locale] = lang.split(';');
       return locale.trim();
     });
 
-    // Geçerli dilleri filtrele
     const validLanguages = languages.filter(lang => locales.includes(lang.split('-')[0]));
 
     if (validLanguages.length === 0) {
@@ -28,11 +30,8 @@ function getLocale(request: any) {
       return defaultLocale;
     }
 
-    // Geçerli dillerden uygun olanı seç
     const selectedLocale = match(validLanguages, locales, defaultLocale);
 
-    console.log('Parsed languages from Accept-Language:', validLanguages);
-    console.log('Selected locale:', selectedLocale);
 
     return selectedLocale;
   } catch (error) {
@@ -41,27 +40,41 @@ function getLocale(request: any) {
   }
 }
 
-export function middleware(request: any) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-
-  // Check if the pathname already includes a supported locale
-  const pathnameHasLocale = locales.some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
-
-  if (pathnameHasLocale) return;
-
-  // Redirect if there is no locale in the pathname
+  const isLoggedIn = request.cookies.has('access_token') || request.cookies.has('refresh_token');
   const locale = getLocale(request);
 
-  // Update the pathname to include the selected locale
-  request.nextUrl.pathname = `/${locale}${pathname}`;
+  // Dil kodunu çıkar
+  const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, '');
 
+  // Korumalı rota kontrolü
+  const isProtectedRoute = protectedRoutes.some(route => pathWithoutLocale.startsWith(route));
+  if (isProtectedRoute) {
+    if (!isLoggedIn) {
+      // Kullanıcı giriş yapmamışsa, signin sayfasına yönlendir
+      return NextResponse.redirect(new URL(`/${locale}/signin`, request.url));
+    }
+  }
+
+  // Giriş yapmış kullanıcılar için signin, signup ve forgotpassword sayfalarına erişimi engelle
+  const authPages = ['/signin', '/signup', '/forgot-password'];
+  if (isLoggedIn && authPages.some(page => pathWithoutLocale.startsWith(page))) {
+    // Giriş yapmış kullanıcıyı ana sayfaya yönlendir
+    return NextResponse.redirect(new URL(`/${locale}/home`, request.url));
+  }
+
+  // Diğer rotalar için dil yönlendirmesi
+  const pathnameHasLocale = locales.some(
+    (loc) => pathname.startsWith(`/${loc}/`) || pathname === `/${loc}`
+  );
+
+  if (pathnameHasLocale) return NextResponse.next();
+
+  request.nextUrl.pathname = `/${locale}${pathname}`;
   return NextResponse.redirect(request.nextUrl);
 }
 
 export const config = {
-  matcher: [
-    '/((?!_next).*)',  // Skip internal paths like _next
-  ],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

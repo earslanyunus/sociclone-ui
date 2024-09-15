@@ -1,19 +1,17 @@
-"use client";
-
+'use client'
 import { motion, AnimatePresence } from "framer-motion";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { Button } from "./ui/button";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -23,27 +21,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-const emailPasswordSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+const signupSchema = z.object({
+  username: z.string().min(3, 'Kullanıcı adı en az 3 karakter olmalıdır'),
+  name: z.string().min(2, 'İsim en az 2 karakter olmalıdır'),
+  email: z.string().email('Geçerli bir e-posta adresi giriniz'),
+  password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
 });
 
 const otpSchema = z.object({
   otp: z.string().length(6),
 });
 
-function SigninForm({ lang }: { lang: any }) {
-  const SigninPage = lang;
-  const router = useRouter();
-  const mailpasswordref = useRef<HTMLDivElement>(null);
-  const otpRef = useRef<HTMLDivElement>(null);
+const SignupForm = ({ lang }: { lang: any }) => {
+  const SignupPage = lang;
+  const [error, setError] = useState<string | null>(null);
   const [showOTP, setShowOTP] = useState(false);
   const [email, setEmail] = useState("");
-  const [error, setError] = useState<string | null>(null);
 
-  const emailPasswordForm = useForm<z.infer<typeof emailPasswordSchema>>({
-    resolver: zodResolver(emailPasswordSchema),
+  const signupForm = useForm<z.infer<typeof signupSchema>>({
+    resolver: zodResolver(signupSchema),
     defaultValues: {
+      username: "",
+      name: "",
       email: "",
       password: "",
     },
@@ -56,53 +55,83 @@ function SigninForm({ lang }: { lang: any }) {
     },
   });
 
-  useEffect(() => {
-    if (showOTP) {
-      mailpasswordref.current?.classList.add("-translate-x-[130%]");
-      otpRef.current?.classList.remove("translate-x-[130%]");
-    }
-  }, [showOTP]);
-
-  const onEmailPasswordSubmit = async (values: z.infer<typeof emailPasswordSchema>) => {
-    setError(null);
+  const signupUser = async (userData: any) => {
     try {
-      const response = await fetch("http://localhost:3002/auth/login", {
+      console.log('Gönderilen veri:', JSON.stringify(userData, null, 2));
+
+      const response = await fetch("http://localhost:3002/auth/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      console.log('Yanıt durumu:', response.status);
+      console.log('Yanıt başlıkları:', response.headers);
+
+      const data = await response.json();
+      console.log('Alınan yanıt:', JSON.stringify(data, null, 2));
+
+      if (response.ok) {
+        return { success: true };
+      } else {
+        return { success: false, error: data.message || "Kayıt işlemi başarısız oldu." };
+      }
+    } catch (error) {
+      console.error('Hata:', error);
+      return { success: false, error: "Bir hata oluştu. Lütfen daha sonra tekrar deneyin." };
+    }
+  };
+
+  const verifySignupOTP = async (formData: any) => {
+    console.log('Gönderilen veri:', JSON.stringify(formData, null, 2));
+    try {
+      const response = await fetch("http://localhost:3002/auth/signup-verify", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+        credentials: 'include'
       });
       const data = await response.json();
       if (response.ok) {
-        setEmail(values.email);
-        setShowOTP(true);
+        return { success: true };
       } else {
-        setError(data.message || "Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
+        return { success: false, error: data.message || "OTP doğrulama başarısız oldu." };
       }
     } catch (error) {
-      setError("Sunucu hatası. Lütfen daha sonra tekrar deneyin.");
+      return { success: false, error: "Bir hata oluştu. Lütfen daha sonra tekrar deneyin." };
+    }
+  };
+
+  const onSignupSubmit = async (values: z.infer<typeof signupSchema>) => {
+    setError(null);
+    const result = await signupUser(values);
+
+    if (result.success) {
+      setEmail(values.email);
+      setShowOTP(true);
+    } else {
+      setError(result.error);
     }
   };
 
   const onOTPSubmit = async (values: z.infer<typeof otpSchema>) => {
     setError(null);
-    try {
-      const response = await fetch("http://localhost:3002/auth/login-verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp: values.otp }),
-        credentials: "include"
-      });
-      const data = await response.json();
-      if (response.ok) {
-        
-        router.push("/home");
+    const formData = {
+      email: email,
+      otp: values.otp
+    };
 
-        
-      } else {
-        setError(data.message || "OTP doğrulama başarısız.");
-      }
-    } catch (error) {
-      setError("Sunucu hatası. Lütfen daha sonra tekrar deneyin.");
+    const result = await verifySignupOTP(formData);
+
+    if (result.success) {
+      alert("Kayıt başarılı!");
+      // Burada kullanıcıyı giriş sayfasına yönlendirebilirsiniz
+    } else {
+      setError(result.error);
     }
   };
 
@@ -143,27 +172,64 @@ function SigninForm({ lang }: { lang: any }) {
       <AnimatePresence initial={false} custom={showOTP ? 1 : -1}>
         {!showOTP ? (
           <motion.div
-            key="signin"
+            key="signup"
             custom={showOTP ? 1 : -1}
             variants={variants}
             initial="initial"
             animate="animate"
             exit="exit"
             className="px-4"
-            layout
+            layout 
+
+
+
+
+
+            
           >
-            <Form {...emailPasswordForm}>
+            <Form {...signupForm}>
               {error && <ErrorMessage message={error} />}
-              <form
-                onSubmit={emailPasswordForm.handleSubmit(onEmailPasswordSubmit)}
-                className="space-y-4"
-              >
+              <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-4">
                 <FormField
-                  control={emailPasswordForm.control}
+                  control={signupForm.control}
+                  name="username"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{SignupPage.username}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          autoComplete="username"
+                          className="focus-visible:ring-lime-500"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={signupForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{SignupPage.fullname}</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          autoComplete="name"
+                          className="focus-visible:ring-lime-500"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={signupForm.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{SigninPage.email}</FormLabel>
+                      <FormLabel>{SignupPage.email}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
@@ -177,26 +243,20 @@ function SigninForm({ lang }: { lang: any }) {
                   )}
                 />
                 <FormField
-                  control={emailPasswordForm.control}
+                  control={signupForm.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{SigninPage.password}</FormLabel>
+                      <FormLabel>{SignupPage.password}</FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          autoComplete="current-password"
+                          autoComplete="new-password"
                           type="password"
                           className="focus-visible:ring-lime-500"
                         />
                       </FormControl>
                       <FormMessage />
-                      <Link
-                        href="/forgot-password"
-                        className="text-sm text-gray-400 hover:underline"
-                      >
-                        {SigninPage.forgotPassword}
-                      </Link>
                     </FormItem>
                   )}
                 />
@@ -205,7 +265,7 @@ function SigninForm({ lang }: { lang: any }) {
                   variant="default"
                   className="w-full py-6 bg-lime-300 text-lime-800 font-bold tracking-wide hover:bg-lime-400"
                 >
-                  {SigninPage.login}
+                  {SignupPage.register}
                 </Button>
               </form>
             </Form>
@@ -219,7 +279,7 @@ function SigninForm({ lang }: { lang: any }) {
             animate="animate"
             exit="exit"
             className="px-4"
-            layout
+            layout // Bu satırı ekleyin
           >
             <Form {...otpForm}>
               {error && <ErrorMessage message={error} />}
@@ -231,10 +291,10 @@ function SigninForm({ lang }: { lang: any }) {
                   control={otpForm.control}
                   name="otp"
                   render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>{SigninPage.otp}</FormLabel>
+                    <FormItem className="">
+                      <FormLabel>{SignupPage.otp}</FormLabel>
                       <FormControl>
-                        <InputOTP maxLength={6} {...field}>
+                        <InputOTP autoComplete="off" maxLength={6} {...field}>
                           <InputOTPGroup className="w-full">
                             <InputOTPSlot index={0} className="w-full" />
                             <InputOTPSlot index={1} className="w-full" />
@@ -247,7 +307,7 @@ function SigninForm({ lang }: { lang: any }) {
                       </FormControl>
                       <FormMessage />
                       <p className="text-sm text-center mt-2 text-gray-400">
-                        {SigninPage.otpDescription}
+                        {SignupPage.otpDescription}
                       </p>
                     </FormItem>
                   )}
@@ -255,9 +315,9 @@ function SigninForm({ lang }: { lang: any }) {
                 <Button
                   type="submit"
                   variant="default"
-                  className="w-full mt-12 py-6 bg-lime-300 text-lime-800 font-bold tracking-wide hover:bg-lime-400"
+                  className="w-full  mt-12 py-6 bg-lime-300 text-lime-800 font-bold tracking-wide hover:bg-lime-400"
                 >
-                  {SigninPage.verify}
+                  {SignupPage.verify}
                 </Button>
               </form>
             </Form>
@@ -266,6 +326,6 @@ function SigninForm({ lang }: { lang: any }) {
       </AnimatePresence>
     </div>
   );
-}
+};
 
-export default SigninForm;
+export default SignupForm;

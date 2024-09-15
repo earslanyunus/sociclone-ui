@@ -1,9 +1,11 @@
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import IconWhite from "/public/sociclone_icon_white.svg";
 import { getDictionary } from "../dictionaries";
+import ForgotPasswordForm from "@/components/forgotPasswordForm";
 
 const ForgotPasswordPage = async ({
   params: { lang },
@@ -11,8 +13,9 @@ const ForgotPasswordPage = async ({
   params: { lang: string };
 }) => {
   const dict = await getDictionary(lang);
-
   const { ForgotPasswordPage } = dict;
+
+
 
   return (
     <main className="w-screen min-h-screen grid md:grid-cols-2">
@@ -37,43 +40,29 @@ const ForgotPasswordPage = async ({
           />
         </div>
       </div>
-      <div className="flex items-center justify-center">
-        <div className="p-4 max-w-sm w-full">
-          <Link href="/signin">
-            <p className="text-left mb-2 flex items-center text-gray-400 hover:underline">
-              <svg
-                className="w-6 h-6 inline-block me-2"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="currentColor"
-                  d="m7.85 13l2.85 2.85q.3.3.288.7t-.288.7q-.3.3-.712.313t-.713-.288L4.7 12.7q-.3-.3-.3-.7t.3-.7l4.575-4.575q.3-.3.713-.287t.712.312q.275.3.288.7t-.288.7L7.85 11H19q.425 0 .713.288T20 12t-.288.713T19 13z"
-                />
-              </svg>{" "}
-              {ForgotPasswordPage.backToLogin}
-            </p>
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-700 mb-2">{ForgotPasswordPage.title}</h1>
-          <p className="text-gray-500 mb-8">
-            {ForgotPasswordPage.description}
-          </p>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <Label htmlFor="email">{ForgotPasswordPage.email}</Label>
-            <Input
-              type="email"
-              id="email"
-              className="focus-visible:ring-lime-500"
-              placeholder={ForgotPasswordPage.emailPlaceholder}
-            />
-          </div>
-          <Button
-            variant={"default"}
-            className="w-full py-6 mt-6 bg-lime-300 text-lime-800 font-bold tracking-wide hover:bg-lime-400"
+      <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col  justify-center max-w-sm px-4">
+        <Link href="/signin">
+        <p className="text-left mb-2 flex items-center text-gray-400 hover:underline">
+          <svg
+            className="w-6 h-6 inline-block me-2"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
           >
-            {ForgotPasswordPage.sendResetLink}
-          </Button>
+            <path
+              fill="currentColor"
+              d="m7.85 13l2.85 2.85q.3.3.288.7t-.288.7q-.3.3-.712.313t-.713-.288L4.7 12.7q-.3-.3-.3-.7t.3-.7l4.575-4.575q.3-.3.713-.287t.712.312q.275.3.288.7t-.288.7L7.85 11H19q.425 0 .713.288T20 12t-.288.713T19 13z"
+            />
+          </svg>{" "}
+          {ForgotPasswordPage.backToLogin}
+        </p>
+      </Link>
+      <h1 className="text-3xl font-bold text-gray-700 mb-2">{ForgotPasswordPage.title}</h1>
+      <p className="text-gray-500 mb-8">{ForgotPasswordPage.description}</p>
         </div>
+      
+
+        <ForgotPasswordForm  ForgotPasswordPage={ForgotPasswordPage}/>
       </div>
     </main>
   );
